@@ -2,6 +2,7 @@ const express = require('express');
 const functions = require('../controller/functions');
 const router = express.Router()
 const auth = require('../middleware/jwt')
+const validate = require('../middlewares/validate')
 
 router.post('/register', functions.verifyUserAndRegister)
 
@@ -29,4 +30,14 @@ router.post('/createChats', auth, functions.createChat)
 
 router.get('/chats/:sender:/receiver', auth, functions.getUserChat)
 
+router.post('/resetPasswordToken', functions.createResetPasswordToken)
+
+router.post('/resetPassword/:token', functions.reset )
+
+router.post('/resetPassword/:token', [
+    check('password').not().isEmpty().isLength({ min: 8 }).withMessage('Must be at least 8 chars long'),
+    check('confirmPassword', 'Passwords do not match').custom((value, { req }) => (value === req.body.password)),
+], validate, functions.resetPassword)
+
+router.get('/success')
 module.exports = router

@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require('path');
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/config");
@@ -20,6 +21,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

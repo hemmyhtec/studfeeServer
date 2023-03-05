@@ -98,7 +98,8 @@ const functions = {
           return res.status(400).json({ msg: "User already verified" });
         user.isVerified = true;
         user.save();
-        res.status(200).json({ msg: "Successfully verified" });
+        res.render('success')
+        // res.status(200).json({ msg: "Successfully verified" });
       });
     } catch (err) {
       res.status(500).json({ msg: err.message });
@@ -321,7 +322,85 @@ const functions = {
       console.log("error", err);
       res.status(401).json({ msg: "Error retrieving users chats" });
     }
+  },
+
+  createResetPasswordToken: async function(req, res){
+    try {
+      const {email} = req.body;
+
+      const user = await User.findOne({email});
+      if(!user) return res.status(401).json('User not found');
+
+      user.generatePasswordReset();
+      await user.save();
+      let link = 'https://' + req.headers.host + '/resetpassword/' + user.resetPasswordToken;
+
+      const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: user.email,
+        subject: 'Request for Reset Password 🤔',
+        html: `<p style="font-size: 20px; font-weight: 500;">You request for a password reset👋</p><p>Please click on the click below to reset your password </p>
+        <p style="font-size: 30px; font-weight: bold;"><a href="${link}">Link</a></p> `,
+      }
+
+      transporter.sendMail(mailOptions).then((result) => {
+        return res.status(201).json({msg: 'Check your email to reset your password'})
+      })
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  reset: async function (req, res){
+    try {
+      const {token} = req.params
+      const user = await User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}})
+
+      if(!user) return res.status(401).json({msg: 'Password reset token is invalid or has expired'})
+      
+      res.render('resetPassword', {user})
+      
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  resetPassword: async function(req, res){
+    try {
+      const {token} = req.params
+
+      User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}}).then((data => {
+        if(!data) res.status(401).json({msg: 'Password reset token is invalid or has expired'})
+
+        data.password = req.body.password;
+        data.resetPasswordToken = undefined;
+        data.resetPasswordExpires = undefined;
+        data.isVerified = true;
+
+
+        data.save()
+
+        const mailOptions = {
+          from: process.env.EMAIL_ADDRESS,
+          to: data.email,
+          subject: 'Your password was just changed',
+          html: `<p> <h1>Hi  <b> ${data.email},</b></h1><p><br><p>This is a confirmation that the password for your account ${data.email} has just been changed.</p> `
+        }
+
+        transporter.sendMail(mailOptions).then((result)=>{
+          res.status(200).json({msg: 'Password successfuly changed'})
+        })
+      }))
+      .catch((err =>{
+        res.status(501).json({ msg: err.message });
+      }))
+
+
+    } catch (error) {
+      res.status(500).json({ msg: err.message });
+    }
   }
+
 };
 
 module.exports = functions;
