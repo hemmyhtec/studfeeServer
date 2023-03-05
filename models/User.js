@@ -39,7 +39,7 @@ const userScheme = new Schema({
         require: true,
         validate: {
             validator: (value) => {
-                return value.length < 8;
+                return value.length > 8;
             },
             message: 'Your password is less than 8 characters'
         }

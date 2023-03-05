@@ -34,14 +34,15 @@ router.get('/chats/:sender:/receiver', auth, functions.getUserChat)
 
 router.post('/resetPasswordToken', functions.createResetPasswordToken)
 
-router.post('/resetPassword/:token', functions.reset )
+router.get('/reset/:token', functions.reset )
 
-router.post('/resetPassword/:token', [
+router.post('/reset/:token', [
     check('password').not().isEmpty().isLength({ min: 8 }).withMessage('Must be at least 8 chars long'),
     check('confirmPassword', 'Passwords do not match').custom((value, { req }) => (value === req.body.password)),
 ], validate, functions.resetPassword)
 
-router.get('/success',)
+router.get('/success')
+router.get('/successPass')
 
 
 module.exports = router

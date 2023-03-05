@@ -327,13 +327,16 @@ const functions = {
   createResetPasswordToken: async function(req, res){
     try {
       const {email} = req.body;
+     
 
       const user = await User.findOne({email});
-      if(!user) return res.status(401).json('User not found');
+      console.log(user)
+      if (!user) return res.status(401).json({ success: false, msg: 'The email address ' + req.body.email + ' is not associated with any account. Double check the email' })
 
       user.generatePasswordReset();
       await user.save();
-      let link = 'https://' + req.headers.host + '/resetpassword/' + user.resetPasswordToken;
+
+      let link = 'http://' + req.headers.host + '/reset/' + user.resetPasswordToken;
 
       const mailOptions = {
         from: process.env.EMAIL_ADDRESS,
@@ -347,6 +350,7 @@ const functions = {
         return res.status(201).json({msg: 'Check your email to reset your password'})
       })
     } catch (err) {
+      console.log(err)
       res.status(500).json({ msg: err.message });
     }
   },
@@ -361,6 +365,7 @@ const functions = {
       res.render('resetPassword', {user})
       
     } catch (err) {
+      console.log(err)
       res.status(500).json({ msg: err.message });
     }
   },
@@ -388,7 +393,8 @@ const functions = {
         }
 
         transporter.sendMail(mailOptions).then((result)=>{
-          res.status(200).json({msg: 'Password successfuly changed'})
+          res.render('successPass')
+          // res.status(200).json({msg: 'Password successfuly changed'})
         })
       }))
       .catch((err =>{
