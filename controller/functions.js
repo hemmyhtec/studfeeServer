@@ -66,8 +66,8 @@ const functions = {
               .catch(() => {
                 res.status(500).json({ msg: "Email error" });
               });
-          } catch (error) {
-            console.log(error);
+          } catch (err) {
+            return res.status(500).json({ msg: err.message });
           }
         })
         .catch((error) => {
@@ -181,7 +181,6 @@ const functions = {
           .status(200)
           .json({ ...updateUserData._doc, msg: "Uploaded Successfuly" });
       } else {
-        console.log("NO data");
         return res.status(400).json({ msg: "Data not updated" });
       }
     } catch (err) {
@@ -233,7 +232,6 @@ const functions = {
       paymentData
         .save()
         .then((response) => {
-          console.log("response", response);
           res.status(200).json({ msg: "Payment Successful" });
         })
         .catch((err) => {
@@ -261,7 +259,6 @@ const functions = {
 
     User.find({}).select('-password').exec((err, users) => {
       if (err) {
-        console.log("error", err);
         res.status(401).json({ msg: "Error retrieving users" });
       } else {
         res.json(users);
@@ -301,7 +298,6 @@ const functions = {
       await message.save();
       res.status(201).json(message);
     } catch (err) {
-      console.log("error", err);
       res.status(401).json({ msg: "Error while creating chat" });
     }
   },
@@ -319,7 +315,6 @@ const functions = {
       }).sort({createdAt: 'asc'})
       res.json(message);
     } catch (err) {
-      console.log("error", err);
       res.status(401).json({ msg: "Error retrieving users chats" });
     }
   },
@@ -330,7 +325,6 @@ const functions = {
      
 
       const user = await User.findOne({email});
-      console.log(user)
       if (!user) return res.status(401).json({ success: false, msg: 'The email address ' + req.body.email + ' is not associated with any account. Double check the email' })
 
       user.generatePasswordReset();
@@ -350,7 +344,6 @@ const functions = {
         return res.status(201).json({msg: 'Check your email to reset your password'})
       })
     } catch (err) {
-      console.log(err)
       res.status(500).json({ msg: err.message });
     }
   },
@@ -365,7 +358,6 @@ const functions = {
       res.render('resetPassword', {user})
       
     } catch (err) {
-      console.log(err)
       res.status(500).json({ msg: err.message });
     }
   },

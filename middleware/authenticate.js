@@ -9,8 +9,6 @@ module.exports = (req, res, next)=> {
         req.user = user.id
         req.token = token
 
-        console.log(user)
-        // console.log(req.user)
         next()
 
     })(req, res, next)
