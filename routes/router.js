@@ -2,7 +2,9 @@ const express = require('express');
 const functions = require('../controller/functions');
 const router = express.Router()
 const auth = require('../middleware/jwt')
-const validate = require('../middlewares/validate')
+const validate = require('../middleware/validator')
+const { check } = require('express-validator');
+
 
 router.post('/register', functions.verifyUserAndRegister)
 
@@ -39,5 +41,7 @@ router.post('/resetPassword/:token', [
     check('confirmPassword', 'Passwords do not match').custom((value, { req }) => (value === req.body.password)),
 ], validate, functions.resetPassword)
 
-router.get('/success')
+router.get('/success',)
+
+
 module.exports = router
