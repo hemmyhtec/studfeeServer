@@ -301,7 +301,7 @@ const functions = {
 
   getUserChat: async function (req, res) {
     const user = await User.findById(req.user);
-    if (!user) return res.status(400).json({ msg: "User not found" });
+    if (!user) return res.status(401).json({ msg: "User not found" });
 
     try {
       const message = await Message.find({
@@ -368,7 +368,7 @@ const functions = {
 
       User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}}).then((data => {
         if(!data) {
-          res.render('error', {msg: 'Password reset token is invalid or has expired'})
+          res.render('error', {msg: 'Password reset token is invalid or has expired '})
         } 
 
         data.password = req.body.password;
@@ -387,7 +387,7 @@ const functions = {
         }
 
         transporter.sendMail(mailOptions).then((result)=>{
-          res.render('success', {msg: 'Password succesfully changed'})
+          res.render('success', {msg: 'Password succesfully changed '})
         })
       }))
       .catch((err =>{
@@ -400,6 +400,17 @@ const functions = {
     } catch (err) {
       const msg = err.message
       res.render('error', {msg})
+    }
+  },
+
+  getUserProfileImage: async function(req, res){
+    try {
+      const user = await User.findById(req.user)
+      if(!user) return res.status(401).json({msg: 'User not found'})
+
+      res.status(200).json({profileImage: user.profileImage})
+    } catch (error) {
+      res.status(501).json({ msg: "Error retreving profile image" });
     }
   }
 

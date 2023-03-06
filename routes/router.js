@@ -44,5 +44,12 @@ router.post('/reset/:token', [
 router.get('/success')
 router.get('/error')
 
+router.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+})
+
+router.get('/getUserProfileUrl', auth, functions.getUserProfileImage)
+
 
 module.exports = router
