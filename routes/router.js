@@ -4,6 +4,7 @@ const router = express.Router()
 const auth = require('../middleware/jwt')
 const validate = require('../middleware/validator')
 const { check } = require('express-validator');
+const adminController = require('../controller/adminController');
 
 
 router.post('/register', functions.verifyUserAndRegister)
@@ -47,10 +48,17 @@ router.get('/error')
 router.get('/logout', function(req, res){
     res.clearCookie('x-auth-token');
     res.status(200).json({ msg: 'Sign-out successful' });
-    // res.redirect('/');
 })
 
 router.get('/getUserProfileUrl', auth, functions.getUserProfileImage)
 
+
+//Admin Routes
+router.post('/registerAdmin', [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Please enter a password with 8 or more characters').isLength({ min: 8 }),
+    check('confirmPassword', 'Passwords do not match').custom((value, { req }) => value === req.body.password)
+  ], validate, adminController.registerAdmin)
 
 module.exports = router

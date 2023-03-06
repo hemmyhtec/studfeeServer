@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  .container.my-5
+    .row.justify-content-center
+      .col-lg-6.col-md-8
+        .card.shadow-lg.border-0.rounded-lg.mt-5
+          .card-header
+            h3.text-center.font-weight-light.my-4 Register
+          .card-body
+            form(method='POST' action='/registerAdmin')
+              .form-group
+                label(for='name') Full Name
+                input#name.form-control(name='name', type='text' required)
+              .form-group
+                label(for='email') Email
+                input#email.form-control(name='email', type='email', required)
+              .form-group
+                label(for='password') Password
+                input#password.form-control(name='password', type='password', required)
+              .form-group
+                label(for='confirmPassword') Confirm Password
+                input#confirmPassword.form-control(name='confirmPassword', type='password', required)
+              button.btn.btn-primary.btn-block(type='submit') Register
+              p.text-center Already have an account?
+              a(href='/login') Login here
+          if (msg)
+            .alert.alert-danger(role='alert')= msg
