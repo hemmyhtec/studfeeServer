@@ -1,6 +1,7 @@
 require("dotenv").config;
 
 const Admin = require('../models/Admin')
+const nodemailer = require("nodemailer");
 
 const secretCode = process.env.SECRET_CODE;
 
