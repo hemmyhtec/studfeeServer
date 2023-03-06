@@ -34,7 +34,7 @@ const adminController = {
            
            const user = await Admin.findOne({ email });
            if(user){
-            return renderErrorPageWithRedirect(req, res, 'You already have an account', 'registerAdmin')  
+            return renderErrorPageWithRedirect(req, res, 'You already have an account', 'admin/register')  
            } 
             
            user = new Admin({
@@ -65,10 +65,10 @@ const adminController = {
                    return renderSuccessPageWithRedirect(req, res, `Thanks for registering with us. Please check your Email: ${user.email} for verification link.`, 'loginAdmin')
                   })
                   .catch(() => {
-                    return renderErrorPageWithRedirect(req, res, 'Email error', 'registerAdmin')  
+                    return renderErrorPageWithRedirect(req, res, 'Email error', 'admin/register')  
                   });
               } catch (err) {
-                return renderErrorPageWithRedirect(req, res, err.message, 'registerAdmin')  
+                return renderErrorPageWithRedirect(req, res, err.message, 'admin/register')  
               }
            })
         } catch (err) {

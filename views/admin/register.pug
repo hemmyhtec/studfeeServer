@@ -1,4 +1,4 @@
-extends layout
+extends ../layouts/main
 
 block content
   .container.my-5
@@ -8,7 +8,7 @@ block content
           .card-header
             h3.text-center.font-weight-light.my-4 Register
           .card-body
-            form(method='POST' action='/registerAdmin')
+            form(method='POST' action="/admin/register-admin")
               .form-group
                 label(for='name') Full Name
                 input#name.form-control(name='name', type='text' required)

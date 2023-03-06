@@ -54,7 +54,7 @@ router.get('/getUserProfileUrl', auth, functions.getUserProfileImage)
 
 // Render Admin Registration Form
 router.get('/register-admin', (req, res) => {
-  res.render('registerAdmin');
+  res.render('admin/register');
 });
 //Admin Routes
 router.post('/register-admin', [
