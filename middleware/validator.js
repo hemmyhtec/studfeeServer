@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     if (!errors.isEmpty()) {
         let error = {};
         errors.array().map((err) => error[err.param] = err.msg)
-        return res.status(422).json({ error })
+        return res.render('error', { msg: error });
     }
     next()
 }

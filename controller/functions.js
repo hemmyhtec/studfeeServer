@@ -86,20 +86,17 @@ const functions = {
 
   verifyUser: async function (req, res) {
     if (!req.params.token)
-      return res.status(400).json({ msg: "Please provide a token" });
+    return res.render('error', { msg: 'Dey play! User not found' });
     try {
       const token = await Token.findOne({ token: req.params.token });
-      if (!token) return res.status(400).json({ msg: "Token not found" });
+      if (!token) return res.render('error', { msg: 'Token not found' });
 
       User.findOne({ _id: token.userId }, (err, user) => {
-        if (!user)
-          return res.status(400).json({ msg: "Dey play! User not found" });
-        if (user.isVerified)
-          return res.status(400).json({ msg: "User already verified" });
+        if (!user) return res.render('error', { msg: 'Dey play! User not found' });
+        if (user.isVerified) return res.render('error', { msg: 'User already verified' });
         user.isVerified = true;
         user.save();
-        res.render('success')
-        // res.status(200).json({ msg: "Successfully verified" });
+        res.render('success', {msg: 'Successfully verified your account'})
       });
     } catch (err) {
       res.status(500).json({ msg: err.message });
@@ -353,7 +350,10 @@ const functions = {
       const {token} = req.params
       const user = await User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}})
 
-      if(!user) return res.status(401).json({msg: 'Password reset token is invalid or has expired'})
+      if(!user) {
+        const msg = 'Password reset token is invalid or has expired'
+        res.render('error', {msg})
+      } 
       
       res.render('resetPassword', {user})
       
@@ -367,7 +367,9 @@ const functions = {
       const {token} = req.params
 
       User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}}).then((data => {
-        if(!data) res.status(401).json({msg: 'Password reset token is invalid or has expired'})
+        if(!data) {
+          res.render('error', {msg: 'Password reset token is invalid or has expired'})
+        } 
 
         data.password = req.body.password;
         data.resetPasswordToken = undefined;
@@ -385,17 +387,19 @@ const functions = {
         }
 
         transporter.sendMail(mailOptions).then((result)=>{
-          res.render('successPass')
-          // res.status(200).json({msg: 'Password successfuly changed'})
+          res.render('success', {msg: 'Password succesfully changed'})
         })
       }))
       .catch((err =>{
-        res.status(501).json({ msg: err.message });
+        const msg = err.message
+        res.render('error', {msg})
+        // res.status(501).json({ msg: err.message });
       }))
 
 
-    } catch (error) {
-      res.status(500).json({ msg: err.message });
+    } catch (err) {
+      const msg = err.message
+      res.render('error', {msg})
     }
   }
 

@@ -42,7 +42,7 @@ router.post('/reset/:token', [
 ], validate, functions.resetPassword)
 
 router.get('/success')
-router.get('/successPass')
+router.get('/error')
 
 
 module.exports = router
