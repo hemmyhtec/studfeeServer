@@ -45,8 +45,9 @@ router.get('/success')
 router.get('/error')
 
 router.get('/logout', function(req, res){
-    req.logout();
-    res.redirect('/');
+    res.clearCookie('x-auth-token');
+    res.status(200).json({ msg: 'Sign-out successful' });
+    // res.redirect('/');
 })
 
 router.get('/getUserProfileUrl', auth, functions.getUserProfileImage)
