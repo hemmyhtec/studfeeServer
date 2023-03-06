@@ -52,9 +52,12 @@ router.get('/logout', function(req, res){
 
 router.get('/getUserProfileUrl', auth, functions.getUserProfileImage)
 
-
+// Render Admin Registration Form
+router.get('/register-admin', (req, res) => {
+  res.render('registerAdmin');
+});
 //Admin Routes
-router.post('/registerAdmin', [
+router.post('/register-admin', [
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter a password with 8 or more characters').isLength({ min: 8 }),
