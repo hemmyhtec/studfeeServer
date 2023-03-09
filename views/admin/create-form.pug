@@ -1,0 +1,21 @@
+.container.my-5
+  .row.justify-content-center
+    .col-lg-6.col-md-8
+      .card.shadow.border-0.rounded-lg.mt-5
+        .card-body
+          form(method='POST', action='/create-form')
+            .mb-3
+              label(for='name') Department Name
+              input#name.form-control(name='dapartmentName', type='name', placeholder='Computer Sceince', required)
+            .mb-3
+              label(for='name') Levy Name
+              input#name.form-control(name='levyName', type='name', placeholder='Department Fee', required)
+            .mb-3
+              label(for='name') Fee Amount
+              input#name.form-control(name='feeAmount', type='number', placeholder='#1500', required)
+            .mb-3
+              button.btn.btn-primary.btn-block(type='submit') Create
+          if errors
+            ul
+              each error in errors
+                li= error.msg

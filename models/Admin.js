@@ -24,7 +24,7 @@ const adminScheme = new Schema({
         require: true,
         validate: {
             validator: (value) => {
-                return value.length < 8;
+                return value.length > 8;
             },
             message: 'Your password is less than 8 characters'
         }
@@ -116,7 +116,7 @@ adminScheme.methods.generatePasswordReset = function(){
 //Regenerate verification token for user
 adminScheme.methods.generateVerificationToken = function(){
     let payload = {
-        userId: this._id,
+        adminId: this._id,
         token: crypto.randomBytes(20).toString('hex')
     }
 
