@@ -18,6 +18,10 @@ let transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+function renderErrorPageWithRedirect(req, res, msg, redirectUrl) {
+  res.render("error", { msg });
+}
 const functions = {
   verifyUserAndRegister: async function (req, res) {
     try {
@@ -352,12 +356,15 @@ const functions = {
 
       if(!user) {
         const msg = 'Password reset token is invalid or has expired'
+        console.log(err)
         res.render('error', {msg})
+
       } 
       
       res.render('resetPassword', {user})
       
     } catch (err) {
+
       res.status(500).json({ msg: err.message });
     }
   },
@@ -392,13 +399,16 @@ const functions = {
       }))
       .catch((err =>{
         const msg = err.message
+  
         res.render('error', {msg})
         // res.status(501).json({ msg: err.message });
+
       }))
 
 
     } catch (err) {
       const msg = err.message
+      console.log(err)
       res.render('error', {msg})
     }
   },

@@ -5,6 +5,8 @@ const auth = require("../middleware/jwt");
 const authTwo = require("../middleware/jwt_web");
 const validate = require("../middleware/validator");
 const validateTwo = require("../middleware/validatorTwo");
+const validateThree = require("../middleware/validatorThree");
+const validateFour = require("../middleware/validatorFour");
 const { check } = require("express-validator");
 const adminController = require("../controller/adminController");
 
@@ -44,13 +46,13 @@ router.post(
     check("password")
       .not()
       .isEmpty()
-      .isLength({ min: 8 })
+      .isLength({ min: 9 })
       .withMessage("Must be at least 8 chars long"),
     check("confirmPassword", "Passwords do not match").custom(
       (value, { req }) => value === req.body.password
     ),
   ],
-  validate,
+  validateFour,
   functions.resetPassword
 );
 
@@ -159,7 +161,7 @@ router.post(
     check("levyName", "Levy name required").not().isEmpty(),
     check("feeAmount", "Fee amount required").not().isEmpty(),
   ],
-  validateTwo,
+  validateThree,
   authTwo,
   adminController.createForm
 );
