@@ -14,7 +14,7 @@ const processPaymentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    dapartmentName: {
+    departmentName: {
         type: String,
     },
 

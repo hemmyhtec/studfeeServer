@@ -4,6 +4,7 @@ const Admin = require("../models/Admin");
 const nodemailer = require("nodemailer");
 const Token = require("../models/Token");
 const Payment = require("../models/Payment");
+const ProcessPayments = require("../models/ProcessPayment")
 
 const secretCode = process.env.SECRET_CODE;
 
@@ -146,17 +147,13 @@ const adminController = {
         }
       });
     } catch (err) {
-      return renderErrorPageWithRedirect(
-        req,
-        res,
-        err.message
-      );
+      return res.render('error', {err: err.message})
     }
   },
 
   createForm: async function (req, res){
     try {
-      const {dapartmentName, levyName, feeAmount} = req.body
+      const {departmentName, levyName, feeAmount} = req.body
 
       const levynameExists = await Payment.findOne({levyName})
       if(levynameExists) return renderErrorPageWithRedirect(
@@ -166,7 +163,7 @@ const adminController = {
       );
 
       const newPayment = new Payment({
-        dapartmentName,
+        departmentName,
         levyName,
         feeAmount
       }) 
@@ -183,10 +180,24 @@ const adminController = {
     }
   },
 
-  getAllPayementList: async function (req, res){
+  getAllPaymentList: async function (req, res){
     try {
-       Payment.find({}).then((paymentList) => {
-        renderSuccessPageWithRedirect(req, res, paymentList)
+      Payment.find({}).then((paymentList) => {
+        // Generate table rows
+        let tableRows = '';
+        paymentList.forEach((payment) => {
+          tableRows += `
+            <tr>
+              <td>${payment.departmentName}</td>
+              <td>${payment.levyName}</td>
+              <td>${payment.feeAmount}</td>
+            </tr>
+          `;
+        });
+        // Render the page with the table
+        console.log(paymentList)
+        res.render('admin/paymentlist', { paymentTable: tableRows });
+
       })
     } catch (err) {
       return renderErrorPageWithRedirect(
@@ -195,7 +206,40 @@ const adminController = {
         err.message
       );
     }
+  },
+  getAllPaidUser: async function (req, res){
+    try {
+      ProcessPayments.find({}).then((userList) => {
+        // Generate table rows
+        let tableRows = '';
+        userList.forEach((paidUsersData) => {
+          tableRows += `
+            <tr>
+              <td>${paidUsersData.userName}</td>
+              <td>${paidUsersData.userEmail}</td>
+              <td>${paidUsersData.levyName}</td>
+              <td>${paidUsersData.feeAmount}</td>
+              <td>${paidUsersData.paymentStatus}</td>
+              <td>${paidUsersData.referenceId}</td>
+            </tr>
+          `;
+        });
+        // Render the page with the table
+        res.render('admin/dashboard', { paidUsersTable: tableRows });
+
+      });
+    } catch (err) {
+      return renderErrorPageWithRedirect(
+        req,
+        res,
+        err.message
+      );
+    }
   }
+  
+  
+  
+  
 
 };
 
